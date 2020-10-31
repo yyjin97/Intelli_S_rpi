@@ -1,10 +1,12 @@
 import json
 import sys
 from websocket import create_connection
+import paho.mqtt.client as mqtt 
 
 address = ""
 port = ""
 json_send = "{\"bno\":[1,2]}"
+
 
 def connect_server():
     try:
@@ -18,7 +20,17 @@ def connect_server():
     while True:
         result = ws.recv()
         bno, rno = result.split(',')
-        ###############
+        mqtt = mqtt.Client("mypub")
+	mqtt.connect("localhost",1883)
+	if bno==1 and rno==1:
+		mqtt.publish('motor', 1)
+	elif bno==1 and rno==2:
+		mqtt.publish('motor',2)
+	elif bno==2 and rno==1:
+		mqtt.publish('motor',3)
+	elif bno==2 and rno==2:
+		mqtt.publish('motor',4)
+	print("The message is published.")
         print("open bno:" + bno + " rno:" + rno) 
     ws.close()
 
