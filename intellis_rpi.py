@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 
 address = ""
 port = ""
-json_send = "{\"bno\":[1,2]}"
+json_send = "{\"bno\":[0,1,2]}"
 
 
 def connect_server():
@@ -17,21 +17,23 @@ def connect_server():
         print(e)
         ws.close()
         exit()
+
+    mqt = mqtt.Client("mypub")
+    mqt.connect("localhost",1883)
     while True:
         result = ws.recv()
         bno, rno = result.split(',')
-        mqtt = mqtt.Client("mypub")
-	mqtt.connect("localhost",1883)
-	if bno==1 and rno==1:
-		mqtt.publish('motor', 1)
-	elif bno==1 and rno==2:
-		mqtt.publish('motor',2)
-	elif bno==2 and rno==1:
-		mqtt.publish('motor',3)
-	elif bno==2 and rno==2:
-		mqtt.publish('motor',4)
+	if bno=="0" and rno=="0":
+	    mqt.publish('motor', 1)
+	elif bno=="0" and rno=="1":
+	    mqt.publish('motor',2)
+	elif bno=="0" and rno=="2":
+	    mqt.publish('motor',3)
+	elif bno=="1" and rno=="0":
+	    mqt.publish('motor',4)
 	print("The message is published.")
         print("open bno:" + bno + " rno:" + rno) 
+        mqt.loop(2)
     ws.close()
 
 if __name__ == '__main__':
